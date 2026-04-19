@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Female Mandate Card Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #D1000A;
+    --white: #ffffff;
+    --offwhite: #F7F2EC;
+    --dark: #1a1a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 40px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  h1 {
+    color: #888;
+    font-family: 'Cormorant SC', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    font-weight: 400;
+  }
+
+  .controls {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .controls label {
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    font-family: 'Cormorant SC', serif;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .controls input, .controls textarea, .controls select {
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #f0f0f0;
+    font-size: 14px;
+    padding: 8px 12px;
+    font-family: 'Cormorant Garamond', serif;
+    outline: none;
+  }
+
+  .controls textarea { resize: vertical; min-height: 80px; }
+  .controls input:focus, .controls textarea:focus, .controls select:focus { border-color: #D1000A; }
+
+  .row { display: flex; gap: 12px; }
+  .row > div { flex: 1; }
+
+  .btn {
+    background: #D1000A;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-family: 'Cormorant SC', serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .btn:hover { background: #a8000a; }
+
+  .btn-dl {
+    background: transparent;
+    color: #D1000A;
+    border: 1px solid #D1000A;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-family: 'Cormorant SC', serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    width: 100%;
+  }
+  .btn-dl:hover { background: rgba(209,0,10,0.08); }
+
+  .preview-area {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .preview-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .preview-label {
+    color: #666;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    font-family: 'Cormorant SC', serif;
+  }
+
+  /* ========== CARD STYLES ========== */
+
+  /* Square 1:1 — displayed at 400x400 (actual 1080x1080) */
+  .card-sq {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 36px 34px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Reel 9:16 — displayed at 225x400 (actual 1080x1920) */
+  .card-rl {
+    width: 225px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 24px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Themes */
+  .theme-row-white { background: var(--white); }
+  .theme-red       { background: var(--red); }
+  .theme-offwhite  { background: var(--offwhite); }
+
+  /* Watermark XX in background */
+  .bg-xx {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  /* Header */
+  .card-header { display: flex; align-items: center; gap: 9px; z-index: 1; }
+
+  .xx-mark { display: flex; align-items: center; }
+
+  .wordmark {
+    font-family: 'Cormorant SC', serif;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    font-size: 9px;
+  }
+  .wordmark-red   { color: var(--red); }
+  .wordmark-white { color: var(--white); }
+
+  .wordmark-sm {
+    font-family: 'Cormorant SC', serif;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    font-size: 8px;
+  }
+
+  /* Quote content */
+  .card-body { z-index: 1; }
+
+  .open-quote {
+    font-family: 'Cormorant Garamond', serif;
+    line-height: 0.8;
+    margin-bottom: 8px;
+  }
+  .open-quote-sq  { font-size: 90px; }
+  .open-quote-rl  { font-size: 64px; }
+  .oq-red   { color: var(--red); opacity: 0.2; }
+  .oq-white { color: var(--white); opacity: 0.2; }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .qt-sq { font-size: 19px; }
+  .qt-rl { font-size: 14px; }
+  .qt-dark  { color: var(--dark); }
+  .qt-white { color: var(--white); }
+
+  /* Stat content */
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .sn-sq { font-size: 88px; }
+  .sn-rl { font-size: 62px; }
+  .sn-white { color: var(--white); }
+  .sn-red   { color: var(--red); }
+
+  .stat-text {
+    font-family: 'Cormorant Garamond', serif;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+  .st-sq { font-size: 17px; }
+  .st-rl { font-size: 12px; }
+  .st-white { color: rgba(255,255,255,0.9); }
+  .st-dark  { color: var(--dark); }
+
+  .stat-source {
+    font-family: 'Cormorant SC', serif;
+    letter-spacing: 0.06em;
+    margin-top: 12px;
+  }
+  .ss-sq { font-size: 9px; }
+  .ss-rl { font-size: 8px; }
+  .ss-white { color: rgba(255,255,255,0.3); }
+  .ss-dark  { color: #bbb; }
+
+  /* Footer */
+  .card-footer { z-index: 1; }
+
+  .rule { height: 1.5px; margin-bottom: 10px; }
+  .rule-sq { width: 30px; }
+  .rule-rl { width: 22px; }
+  .rule-red   { background: var(--red); }
+  .rule-white { background: var(--white); }
+
+  .attribution {
+    font-family: 'Cormorant SC', serif;
+    letter-spacing: 0.06em;
+    font-weight: 400;
+  }
+  .at-sq { font-size: 11px; }
+  .at-rl { font-size: 9px; }
+  .at-dark  { color: #888; }
+  .at-white { color: rgba(255,255,255,0.55); }
+
+  .site-url {
+    font-family: 'Cormorant SC', serif;
+    letter-spacing: 0.1em;
+    margin-top: 7px;
+    display: block;
+  }
+  .su-sq { font-size: 8px; }
+  .su-rl { font-size: 7px; }
+  .su-red-faint   { color: var(--red); opacity: 0.35; }
+  .su-white-faint { color: var(--white); opacity: 0.25; }
+
+  .tagline {
+    font-family: 'Cormorant SC', serif;
+    letter-spacing: 0.18em;
+  }
+  .tl-sq { font-size: 8px; }
+  .tl-rl { font-size: 7px; }
+  .tl-white { color: rgba(255,255,255,0.3); }
+  .tl-red   { color: rgba(209,0,10,0.3); }
+</style>
+</head>
+<body>
+
+<h1>Female Mandate — Card Generator</h1>
+
+<div class="controls">
+  <div class="row">
+    <div>
+      <label>Card type</label>
+      <select id="cardType" onchange="updateCards()">
+        <option value="quote">Quote</option>
+        <option value="stat">Stat</option>
+      </select>
+    </div>
+    <div>
+      <label>Theme</label>
+      <select id="cardTheme" onchange="updateCards()">
+        <option value="red-on-white">Red on white</option>
+        <option value="white-on-red">White on red</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="quoteFields">
+    <div>
+      <label>Quote text</label>
+      <textarea id="quoteText" oninput="updateCards()">The most dangerous woman of all is the one who refuses to rely on your approval for her sense of self.</textarea>
+    </div>
+    <div>
+      <label>Attribution</label>
+      <input type="text" id="attribution" oninput="updateCards()" value="Mandy Hale">
+    </div>
+  </div>
+
+  <div id="statFields" style="display:none;">
+    <div>
+      <label>Stat number (e.g. 21%)</label>
+      <input type="text" id="statNum" oninput="updateCards()" value="21%">
+    </div>
+    <div>
+      <label>Stat description</label>
+      <textarea id="statDesc" oninput="updateCards()">The superannuation gap between men and women at retirement. A system. Not an accident.</textarea>
+    </div>
+    <div>
+      <label>Source</label>
+      <input type="text" id="statSource" oninput="updateCards()" value="KPMG She's Price(d)less — femalemandate.com">
+    </div>
+  </div>
+
+  <button class="btn" onclick="updateCards()">Preview cards</button>
+  <button class="btn-dl" onclick="downloadCards()">Download both sizes (PNG)</button>
+</div>
+
+<div class="preview-area" id="previewArea">
+  <div class="preview-wrap">
+    <div class="preview-label">Square 1:1 — 1080 × 1080px</div>
+    <div id="cardSquare"></div>
+  </div>
+  <div class="preview-wrap">
+    <div class="preview-label">Reel 9:16 — 1080 × 1920px</div>
+    <div id="cardReel"></div>
+  </div>
+</div>
+
+<script>
+  const XX_SVG_LG = `<svg width="36" height="27" viewBox="0 0 36 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 2L15 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 2L2 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M21 2L34 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M34 2L21 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M12 2L24 25" stroke="COLOR" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+  </svg>`;
+
+  const XX_SVG_SM = `<svg width="26" height="20" viewBox="0 0 36 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 2L15 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 2L2 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M21 2L34 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M34 2L21 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M12 2L24 25" stroke="COLOR" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+  </svg>`;
+
+  const XX_BG = `<svg width="280" height="210" viewBox="0 0 36 27" fill="none" xmlns="http://www.w3.org/2000/svg" class="bg-xx">
+    <path d="M2 2L15 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 2L2 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M21 2L34 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M34 2L21 25" stroke="COLOR" stroke-width="4" stroke-linecap="round"/>
+    <path d="M12 2L24 25" stroke="COLOR" stroke-width="1" stroke-linecap="round"/>
+  </svg>`;
+
+  function getValues() {
+    const type = document.getElementById('cardType').value;
+    const theme = document.getElementById('cardTheme').value;
+    const isRed = theme === 'white-on-red';
+    const markColor = isRed ? '#ffffff' : '#D1000A';
+    const bgClass = isRed ? 'theme-red' : 'theme-row-white';
+    const wordClass = isRed ? 'wordmark-white' : 'wordmark-red';
+    const wordSmClass = isRed ? 'wordmark-sm wordmark-white' : 'wordmark-sm wordmark-red';
+    const oqClass = isRed ? 'oq-white' : 'oq-red';
+    const qtClass = isRed ? 'qt-white' : 'qt-dark';
+    const ruleClass = isRed ? 'rule-white' : 'rule-red';
+    const atClass = isRed ? 'at-white' : 'at-dark';
+    const suClass = isRed ? 'su-white-faint' : 'su-red-faint';
+    const tlClass = isRed ? 'tl-white' : 'tl-red';
+    const snClass = isRed ? 'sn-white' : 'sn-red';
+    const stClass = isRed ? 'st-white' : 'st-dark';
+    const ssClass = isRed ? 'ss-white' : 'ss-dark';
+    return { type, theme, isRed, markColor, bgClass, wordClass, wordSmClass, oqClass, qtClass, ruleClass, atClass, suClass, tlClass, snClass, stClass, ssClass };
+  }
+
+  function buildCard(size, v) {
+    const isSq = size === 'sq';
+    const xxMark = (isSq ? XX_SVG_LG : XX_SVG_SM).replaceAll('COLOR', v.markColor);
+    const xxBg = XX_BG.replaceAll('COLOR', v.markColor);
+    const cardClass = isSq ? 'card-sq' : 'card-rl';
+    const oqSz = isSq ? 'open-quote-sq' : 'open-quote-rl';
+    const qtSz = isSq ? 'qt-sq' : 'qt-rl';
+    const snSz = isSq ? 'sn-sq' : 'sn-rl';
+    const stSz = isSq ? 'st-sq' : 'st-rl';
+    const ssSz = isSq ? 'ss-sq' : 'ss-rl';
+    const ruleSz = isSq ? 'rule-sq' : 'rule-rl';
+    const atSz = isSq ? 'at-sq' : 'at-rl';
+    const suSz = isSq ? 'su-sq' : 'su-rl';
+    const tlSz = isSq ? 'tl-sq' : 'tl-rl';
+    const wdClass = isSq ? v.wordClass : v.wordSmClass;
+
+    let body = '';
+    if (v.type === 'quote') {
+      const qText = document.getElementById('quoteText').value;
+      const attr = document.getElementById('attribution').value;
+      body = `
+        <div class="card-body">
+          <div class="open-quote ${oqSz} ${v.oqClass}">"</div>
+          <p class="quote-text ${qtSz} ${v.qtClass}">${qText}</p>
+        </div>
+        <div class="card-footer">
+          <div class="rule ${ruleSz} ${v.ruleClass}"></div>
+          <p class="attribution ${atSz} ${v.atClass}">— ${attr}</p>
+          <span class="site-url ${suSz} ${v.suClass}">femalemandate.com</span>
+        </div>`;
+    } else {
+      const num = document.getElementById('statNum').value;
+      const desc = document.getElementById('statDesc').value;
+      const src = document.getElementById('statSource').value;
+      body = `
+        <div class="card-body">
+          <p class="stat-number ${snSz} ${v.snClass}">${num}</p>
+          <p class="stat-text ${stSz} ${v.stClass}">${desc}</p>
+          <p class="stat-source ${ssSz} ${v.ssClass}">${src}</p>
+        </div>
+        <p class="tagline ${tlSz} ${v.tlClass}">feminism is for everyone</p>`;
+    }
+
+    return `
+      <div class="${cardClass} ${v.bgClass}" id="card-${size}">
+        ${xxBg}
+        <div class="card-header">
+          <div class="xx-mark">${xxMark}</div>
+          <span class="${wdClass}">FEMALE MANDATE</span>
+        </div>
+        ${body}
+      </div>`;
+  }
+
+  function updateCards() {
+    const type = document.getElementById('cardType').value;
+    document.getElementById('quoteFields').style.display = type === 'quote' ? 'flex' : 'none';
+    document.getElementById('quoteFields').style.flexDirection = 'column';
+    document.getElementById('quoteFields').style.gap = '14px';
+    document.getElementById('statFields').style.display = type === 'stat' ? 'flex' : 'none';
+    document.getElementById('statFields').style.flexDirection = 'column';
+    document.getElementById('statFields').style.gap = '14px';
+    const v = getValues();
+    document.getElementById('cardSquare').innerHTML = buildCard('sq', v);
+    document.getElementById('cardReel').innerHTML = buildCard('rl', v);
+  }
+
+  async function downloadCards() {
+    alert('To download as PNG:\n\n1. Right-click either card\n2. Select "Save image as"\n\nFor automated PNG export, use the Make.com workflow described in the setup guide — it screenshots these cards at full Instagram resolution (1080×1080 and 1080×1920) automatically.');
+  }
+
+  updateCards();
+</script>
+</body>
+</html>
