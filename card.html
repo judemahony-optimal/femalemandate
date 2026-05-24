@@ -1,16 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Female Mandate Card</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+SC:wght@400;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --red: #D1000A; --white: #ffffff; --dark: #1a1a1a; }
   html, body { width: 100%; height: 100%; overflow: hidden; }
-  body { display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', Georgia, serif; }
+  body { display: flex; align-items: center; justify-content: center; font-family: Georgia, 'Times New Roman', serif; background: #fff; }
 
   .card { display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
   .card.square { width: 1080px; height: 1080px; padding: 96px 92px 80px; }
@@ -22,7 +20,7 @@
   .bg-xx { position: absolute; bottom: -40px; right: -40px; opacity: 0.04; pointer-events: none; }
 
   .card-header { display: flex; align-items: center; gap: 20px; z-index: 1; }
-  .wordmark { font-family: 'Cormorant SC', serif; font-weight: 600; letter-spacing: 0.22em; }
+  .wordmark { font-family: Georgia, serif; font-weight: bold; letter-spacing: 0.22em; text-transform: uppercase; }
   .card.square .wordmark { font-size: 22px; }
   .card.reel   .wordmark { font-size: 28px; }
   .c-red   { color: #D1000A; }
@@ -30,31 +28,31 @@
 
   .card-body { z-index: 1; }
 
-  .open-quote { font-family: 'Cormorant Garamond', serif; line-height: 0.8; margin-bottom: 16px; }
+  .open-quote { font-family: Georgia, serif; line-height: 0.8; margin-bottom: 16px; }
   .card.square .open-quote { font-size: 220px; }
   .card.reel   .open-quote { font-size: 280px; }
   .oq-red   { color: #D1000A; opacity: 0.18; }
   .oq-white { color: #ffffff; opacity: 0.18; }
 
-  .quote-text { font-family: 'Cormorant Garamond', serif; font-style: italic; line-height: 1.5; }
+  .quote-text { font-family: Georgia, serif; font-style: italic; line-height: 1.5; }
   .card.square .quote-text { font-size: 52px; }
   .card.reel   .quote-text { font-size: 64px; }
   .qt-dark  { color: #1a1a1a; }
   .qt-white { color: #ffffff; }
 
-  .stat-number { font-family: 'Cormorant Garamond', serif; font-weight: 600; line-height: 1; }
+  .stat-number { font-family: Georgia, serif; font-weight: bold; line-height: 1; }
   .card.square .stat-number { font-size: 220px; }
   .card.reel   .stat-number { font-size: 260px; }
   .sn-white { color: #ffffff; }
   .sn-red   { color: #D1000A; }
 
-  .stat-text { font-family: 'Cormorant Garamond', serif; line-height: 1.45; margin-top: 32px; }
+  .stat-text { font-family: Georgia, serif; line-height: 1.45; margin-top: 32px; }
   .card.square .stat-text { font-size: 46px; }
   .card.reel   .stat-text { font-size: 56px; }
   .st-white { color: rgba(255,255,255,0.9); }
   .st-dark  { color: #1a1a1a; }
 
-  .stat-source { font-family: 'Cormorant SC', serif; letter-spacing: 0.08em; margin-top: 32px; }
+  .stat-source { font-family: Georgia, serif; letter-spacing: 0.08em; margin-top: 32px; font-variant: small-caps; }
   .card.square .stat-source { font-size: 22px; }
   .card.reel   .stat-source { font-size: 28px; }
   .ss-white { color: rgba(255,255,255,0.3); }
@@ -68,19 +66,19 @@
   .rule-red   { background: #D1000A; }
   .rule-white { background: #ffffff; }
 
-  .attribution { font-family: 'Cormorant SC', serif; letter-spacing: 0.08em; }
+  .attribution { font-family: Georgia, serif; letter-spacing: 0.08em; font-variant: small-caps; }
   .card.square .attribution { font-size: 26px; }
   .card.reel   .attribution { font-size: 32px; }
   .at-dark  { color: #888; }
   .at-white { color: rgba(255,255,255,0.55); }
 
-  .site-url { font-family: 'Cormorant SC', serif; letter-spacing: 0.12em; display: block; margin-top: 16px; }
+  .site-url { font-family: Georgia, serif; letter-spacing: 0.12em; display: block; margin-top: 16px; font-variant: small-caps; }
   .card.square .site-url { font-size: 18px; }
   .card.reel   .site-url { font-size: 22px; }
   .su-red   { color: #D1000A; opacity: 0.35; }
   .su-white { color: #ffffff; opacity: 0.25; }
 
-  .tagline { font-family: 'Cormorant SC', serif; letter-spacing: 0.22em; }
+  .tagline { font-family: Georgia, serif; letter-spacing: 0.22em; font-variant: small-caps; }
   .card.square .tagline { font-size: 18px; }
   .card.reel   .tagline { font-size: 22px; }
   .tl-white { color: rgba(255,255,255,0.3); }
